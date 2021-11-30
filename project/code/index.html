@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title></title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <script type="text/javascript" src="/js/lib/dummy.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/2.4.1/mapbox-gl.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css">
+    <script type="text/javascript" src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css">
+
+    <style id="compiled-css" type="text/css">
+        * {
+            scroll-behavior: smooth;
+        }
+
+        .active {
+            color: #cd4c6c;
+        }
+
+        /*CSS of header*/
+
+        header {
+            height: 60vh;
+
+            background-color: black;
+        }
+
+        header div {
+            margin-left: auto;
+            margin-right: auto;
+            width: 20vw;
+        }
+
+        header h1 {
+            font-size: 8vw;
+            color: white;
+            text-align: center;
+            margin-top: 0px;
+            padding-top: 150px;
+            font-family: 'Audiowide', cursive;
+        }
+
+        body {
+            margin: 0 0 0 0;
+        }
+
+        /*CSS of Nav Bar*/
+        nav {
+            position: sticky;
+            top: 0;
+            background-image: linear-gradient(to left, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 20%, rgba(0, 0, 0, 2) 98%);
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            display: inline-block;
+            border-right: 1px solid #bbb;
+            font-size: 30px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        li a {
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            display: block;
+            color: white;
+        }
+
+        li a:hover {
+            background-color: #111;
+        }
+
+        /*Three title of 3 sections*/
+        .titles {
+            font-size: 70px;
+            font-family: 'Share Tech Mono', monospace;
+            color: white;
+            list-style-type: none;
+            margin: 0;
+            overflow: hidden;
+            background-color: #333;
+            text-align: center;
+            font-weight: bolder;
+            min-height: 70px;
+        }
+
+        /*Parallax*/
+        .parallax {
+            background-image: url('https://www.australia.com/content/dam/assets/photograph/digital/1/c/0/q/t/2240453.jpg');
+            height: 100vh;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #map {
+            margin-left: auto;
+            margin-right: auto;
+            top: 0;
+            bottom: 0;
+            width: 800px;
+            height: 400px;
+        }
+
+        #features {
+            top: 0px;
+            left: 0px;
+            height: auto;
+            margin-top: 10px;
+            margin-left: 10px;
+            width: 500px;
+        }
+
+        .map-overlay {
+            position: absolute;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            font-family: Arial, sans-serif;
+            overflow: auto;
+            border-radius: 3px;
+        }
+
+        #infoPanel {
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+            padding: 0.5em 1em;
+            margin: 1em auto;
+            max-width: 35em;
+            background: linear-gradient(160deg, #f5eada 0%, #faf6f0 100%);
+        }
+
+        #infoPanelImage {
+            float: right;
+            margin-left: 1em;
+        }
+
+        /* Dropdown Button */
+        .dropbtn {
+            background-color: #555555;
+            color: white;
+            width: 160px;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .dropbtn:hover {
+            box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #d8748d;
+        }
+
+        div.polaroid {
+            display: flex;
+            float: left;
+            display: inline;
+            width: 40%;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 2px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-left: 30px;
+        }
+
+
+        div.container {
+            text-align: center;
+            padding: 10px;
+        }
+
+        div.polaroid1 {
+            display: flex;
+            float: center;
+            display: inline;
+            width: 23%;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 2px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 20px;
+            margin-top: 30px;
+            margin-left: 47px;
+            padding: 5px;
+            padding-top: 10px;
+        }
+
+        div.polaroid2 {
+            display: flex;
+            float: left;
+            display: inline;
+            width: 55%;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 2px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 10px;
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+        div.polaroid3 {
+            display: flex;
+            float: center;
+            display: inline;
+            width: 23%;
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 2px 0 rgba(0, 0, 0, 0.19);
+            margin-bottom: 10px;
+            margin-top: 20px;
+            margin-left: 37px;
+            padding: 5px;
+            padding-top: 10px;
+        }
+
+        /* EOS */
+
+    </style>
+
+    <script id="insert"></script>
+
+
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html lang='en'>
+
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Luckiest+Guy|Bitter|Audiowide|Press+Start+2P|Share+Tech+Mono|Monoton&display=swap" rel="stylesheet">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    </head>
+
+    <body>
+
+        <!--    This is Header -->
+        <header>
+            <h1>Visit Melbourne</h1>
+        </header>
+        <!--     This is Nav Bar-->
+        <nav>
+            <ul class="navitem">
+                <li><a href="#section1" id="nav-item-1" class="nav-item ">About</a></li>
+                <li><a href="#section2" id="nav-item-2" class="nav-item">Point of Interests</a></li>
+                <li><a href="#section3" id="nav-item-3" class="nav-item">Weather</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!--      This is About us Section  -->
+            <section class="sections" id="section1">
+                <p class="titles" style="font-size:70px;margin:0;">About</p>
+                <!--        Parallax-->
+                <div class="parallax"></div>
+
+                <!--            Words in About Us-->
+                <div>
+                    <div class="polaroid" style="display:inline-block">
+                        <img src="https://sbrowneadvertising.files.wordpress.com/2012/10/melbourne.jpg" alt="Tulip" style="width:100%">
+                        <div class="container">
+                            <b style="font-size:15px">Melbourne</b>
+                            <p style="font-size:14px;text-align: left;">Melbourne is the capital and most-populous city of the Australian state of Victoria, and the second-most populous city in both Australia and Oceania. Its name generally refers to a 9,993 km2 (3,858 sq mi) metropolitan area known as Greater Melbourne, comprising an urban agglomeration of 31 local municipalities, although the name is also used specifically for the local municipality of City of Melbourne based around its central business area. The city occupies much of the northern and eastern coastlines of Port Phillip Bay and spreads into the Mornington Peninsula and the hinterlands towards the Yarra Valley, the Dandenong and Macedon Ranges. It has a population over 5 million (19% of the population of Australia, as per 2020), mostly residing to the east side of the city centre, and its inhabitants are commonly referred to as "Melburnians".</p>
+                        </div>
+                    </div>
+                    <div class="polaroid2" style="display:inline-block;text-align: center;">
+                        <h style="display:inline-block;font-size:50px;font-family: 'Audiowide'">About Melbourne</h>
+                    </div>
+                    <div class="polaroid3" style="display:inline-block">
+                        <h style="display:inline-block">Melbourne Culture</h>
+                        <p style="font-size:14px;text-align: left;">the Dandenonurban agglomeration of 31 local municipalities, although the name is also used specifically for the local municipality of City of Melbourne based around its central business area. The city occupies much of the northern and eastern coastlines of Portf the populatof Australia, as per 2020), mostly r The city occupies much of the northern annes of Portf the population of Australia, as per 2020), mostly residing to the east side of the city centre, and its inhabitants are commonly referred to as "Melburnians".</p>
+                    </div>
+
+                    <div class="polaroid1" style="display:inline-block">
+                        <img src="http://www.tripstance.com/storage/city/city%20sightseeing%20melbourne%20metrobus%204.jpg" alt="Tulip" style="width:100%">
+                    </div>
+                    <div class="polaroid1" style="display:inline-block">
+                        <img src="https://www.grayline.com.au/images/melbourne/melbournecity/bayside/colourful-bathing-boxes-at-brighton-beach-400x300.jpg" alt="Tulip" style="width:100%">
+                    </div>
+                    <div class="polaroid1" style="display:inline-block">
+                        <img src="https://www.visitmelbourne.com/-/media/images/melbourne/things-to-do/art-theatre-and-culture/architecture-and-design/heritage-architecture_mel_r_1383926_1150x863.jpg?h=600&iar=1&mh=600&mw=800&w=800&ts=20151026240856&hash=0E9C41312F9733F3F7AF511586A3C088" alt="Tulip" style="width:100%">
+                    </div>
+
+                </div>
+            </section>
+
+            <section class="sections" id="section2">
+                <p class="titles" style="font-size:70px;margin:0;">Point of Interests</p>
+
+                <div style="height:50px;font-size:36px；position: absolute;left: 10%;padding-left: 29%;padding-top:20px;padding-bottom:30px">
+                    <div class="dropdown">
+                        <button id="landmark" class="dropbtn">Tourism</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Accommodation</button>
+                        <div class="dropdown-content">
+                            <a href="javascript:void(0);" id="accom">Hotel</a>
+                            <a href="javascript:void(0);" id="airbnb">Airbnb</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button id="cafe_rest" class="dropbtn">Restaurant</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Entertainment</button>
+                        <div class="dropdown-content">
+                            <a href="javascript:void(0);" id="shop_mall">Shop Mall</a>
+                            <a href="javascript:void(0);" id="club">Club</a>
+                            <a href="javascript:void(0);" id="bar">Bar</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Art</button>
+                        <div class="dropdown-content">
+                            <a href="javascript:void(0);" id="music">Live Music Events</a>
+                            <a href="javascript:void(0);" id="art">Art Gallery</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="map"></div>
+                <div id="infoPanel">
+                    <h3 id="infoPanelTitle"></h3>
+                    <div id="infoPanelContents"></div>
+                </div>
+                <!--  </div> -->
+            </section>
+
+            <section class="sections" id="section3">
+                <p class="titles" style="font-size:70px;margin:0;">Weather</p>
+                <div style="height:500px;font-size:36px；">
+                    
+                <div class="row">
+                <iframe src="./weather_chart.html" frameborder="0" width="1400px" height="800px"></iframe>
+
+                </div>
+
+                
+            </section>
+
+
+        </main>
+
+    </body>
+
+    </html>
+
+
+    <script type="text/javascript">
+        //<![CDATA[
+
+
+        window.onscroll = function() {
+            var articles = document.getElementsByTagName('main')[0].getElementsByTagName('section');
+            var navlinks = document.getElementsByTagName('nav')[0].getElementsByTagName('a');
+            var n = -1;
+            while (n < articles.length - 1 && articles[n + 1].offsetTop <= window.scrollY + 3) {
+                n++;
+            }
+            for (var a = 0; a < navlinks.length; a++) {
+                navlinks[a].classList.remove('active');
+            }
+            if (n >= 0) {
+                navlinks[n].classList.add('active');
+            }
+        }
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoiY2NjaDQiLCJhIjoiY2t0b3Zmb2ZrMGdqODJucG10aWQzejRoeCJ9.EaUYOvgReTWtM_sE_dfsfQ';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/ccch4/ckuknx3rhgox818npvq8xvz80',
+            center: [144.9631, -37.8136],
+            zoom: 12.4
+        });
+
+        function resetLayer() {
+
+
+            for (const id of _layers) {
+                if (id != "landmark") {
+                    map.setLayoutProperty(
+                        id,
+                        'visibility',
+                        'none'
+                    );
+                } else {
+                    map.setLayoutProperty(
+                        "landmark",
+                        'visibility',
+                        'visible'
+                    );
+                }
+            }
+        }
+        var _names = ['Feature_Name', 'trading_name', 'Trading_name', 'name_x', 'Trading_name', 'Trading_name', 'Trading_name', 'venue_name', 'Name'];
+        var _layers = ['landmark', 'cafe-rest', 'accom', 'airbnb', 'shop-mall', 'club', 'bar', 'music', 'art'];
+        var _layerMap = {
+            'landmark': 'landmark',
+            'cafe_rest': 'cafe-rest',
+            'accom': 'accom',
+            'airbnb': 'airbnb',
+            'shop_mall': 'shop-mall',
+            'club': 'club',
+            'bar': 'bar',
+            'music': 'music',
+            'art': 'art'
+        }
+        var _lons = ['lon', 'x_coordinate', 'lon', 'longitude_x', 'lon', 'lon', 'lon', 'lon', 'lon'];
+        var _lats = ['lat', 'y_coordinate', 'lat', 'latitude_x', 'lat', 'lat', 'lat', 'lat', 'lat'];
+        var _info = [
+            ['Feature_Name', 'Sub_Theme'],
+            ['trading_name', 'street_address', 'seating_type'],
+            ['Trading_name', 'CLUE_small_area'],
+            ['name_x', 'neighbourhood', 'room_type_x', 'listing_url'],
+            ['Trading_name', 'Industry_(ANZSIC4)_description'],
+            ['Trading_name', 'CLUE_small_area'],
+            ['Trading_name', 'Street_address', 'Number_of_patrons'],
+            ['venue_name', 'venue_address', 'space_type', 'website'],
+            ['Name', 'Asset_Type', 'Structure', 'Address_Point']
+        ]
+        var _infoMap = {
+            'Feature_Name': 'Name',
+            'Sub_Theme': 'Theme',
+            'trading_name': 'Name',
+            'street_address': 'Address',
+            'seating_type': 'Seating Type',
+            'Trading_name': 'Name',
+            'CLUE_small_area': 'Area',
+            'name_x': 'Name',
+            'neighbourhood': 'Area',
+            'room_type_x': 'Room Type',
+            'listing_url': 'Website',
+            'Industry_(ANZSIC4)_description': 'Type',
+            'Street_address': 'Address',
+            'Number_of_patrons': 'Capacity',
+            'venue_name': 'Name',
+            'venue_address': 'Address',
+            'space_type': 'Space Type',
+            'website': 'Website',
+            'Name': 'Name',
+            'Asset_Type': 'Asset Type',
+            'Structure': 'Structure',
+            'Address_Point': 'Address'
+        };
+
+        map.on('load', () => {
+            map.getCanvas().style.cursor = 'default';
+            resetLayer();
+            /* map.on('mousemove', ({
+              point
+            }) => {
+              const location = map.queryRenderedFeatures(point, {
+                layers: _layers
+              });
+            
+              document.getElementById('pd').innerHTML = location.length ?
+                `<h2>${location[0].properties[_names[_layers.indexOf(location[0].layer.id)]]}</h2>
+                  ` :
+                `<h3>Hover over a state</h3>`;
+            }); */
+
+            map.on('click', ({
+                point
+            }) => {
+                const location = map.queryRenderedFeatures(point, {
+                    layers: _layers
+                });
+                if (location.length) {
+
+                    if (typeof map.getLayer('selectedPoint') !== "undefined") {
+                        map.removeLayer('selectedPoint')
+                        map.removeSource('selectedPoint');
+                    }
+                    let feature = location[0];
+                    map.addSource('selectedPoint', {
+                        "type": "geojson",
+                        "data": feature.toJSON()
+                    });
+                    map.addLayer({
+                        "id": "selectedPoint",
+                        "type": "circle",
+                        "source": "selectedPoint",
+                        "paint": {
+                            "circle-color": "green",
+                            "circle-radius": 13
+                        }
+                    });
+
+                    map.flyTo({
+                        center: [feature.properties[_lons[_layers.indexOf(feature.layer.id)]], feature.properties[_lats[_layers.indexOf(feature.layer.id)]]],
+                        zoom: 15
+                    });
+                    document.querySelector('#infoPanelContents').innerHTML = ''
+                    if (feature.layer.id == 'landmark') {
+                        let articleTitle = feature.properties.Feature_Name;
+
+                        for (i = 0; i < articleTitle.length; i++) {
+                            articleTitle = articleTitle.replace(" ", "_");
+                        }
+
+                        let url = 'https://en.wikipedia.org/api/rest_v1/page/summary/' +
+                            articleTitle + '?redirect=true';
+
+                        fetch(url).then(response => response.json()).then(json => {
+                            // At the START of the html, add an image
+                            let html = json.extract_html;
+                            if (json.thumbnail) {
+
+                                html = '<img src="' + json.thumbnail.source +
+                                    '" width="220" id="infoPanelImage">' + html;
+
+                            }
+                            if (typeof html === "undefined") {
+                                html = "Wiki not found!";
+                            }
+                            document.querySelector('#infoPanelContents').innerHTML = html;
+
+                        });
+                    }
+
+                    popUpText = ""
+                    for (let info in _info[_layers.indexOf(feature.layer.id)]) {
+                        popUpText += "<b>" + _infoMap[_info[_layers.indexOf(feature.layer.id)][info]] + ': ' + "</b>"
+                        if (_infoMap[_info[_layers.indexOf(feature.layer.id)][info]] == 'Website') {
+                            popUpText += '<a href = ' + feature.properties[_info[_layers.indexOf(feature.layer.id)][info]] + '>' + 'Go</a>';
+                        } else {
+                            popUpText += feature.properties[_info[_layers.indexOf(feature.layer.id)][info]] + '</br>';
+                        }
+                    }
+
+                    new mapboxgl.Popup()
+                        .setLngLat({
+                            lat: feature.properties[_lats[_layers.indexOf(feature.layer.id)]],
+                            lon: feature.properties[_lons[_layers.indexOf(feature.layer.id)]]
+                        })
+                        .setHTML(popUpText)
+                        .addTo(map);
+
+                }
+            });
+        });
+
+        map.on('idle', () => {
+            if (!map.getLayer('landmark') || !map.getLayer('cafe-rest') || !map.getLayer('accom') || !map.getLayer('airbnb') || !map.getLayer('shop-mall') || !map.getLayer('club') || !map.getLayer('bar') || !map.getLayer('music') || !map.getLayer('art')) {
+                return;
+            }
+
+            const toggleableLayerIds = _layers;
+
+            function setLayer(layer, e) {
+                document.querySelector('#infoPanelContents').innerHTML = "";
+                const clickedLayer = _layerMap[layer.id];
+                e.preventDefault();
+                e.stopPropagation();
+
+                map.setLayoutProperty(
+                    clickedLayer,
+                    'visibility',
+                    'visible'
+                );
+
+                for (const id of toggleableLayerIds) {
+                    if (id != clickedLayer) {
+                        map.setLayoutProperty(
+                            id,
+                            'visibility',
+                            'none'
+                        );
+                    }
+                }
+            }
+
+            landmark.onclick = function(e) {
+                setLayer(this, e)
+                console.log("1")
+            }
+
+            cafe_rest.onclick = function(e) {
+                setLayer(this, e)
+                console.log("2")
+            }
+
+            accom.onclick = function(e) {
+                setLayer(this, e)
+                console.log("3")
+            }
+
+            airbnb.onclick = function(e) {
+                setLayer(this, e)
+                console.log("4")
+            }
+
+            shop_mall.onclick = function(e) {
+                setLayer(this, e)
+                console.log("5")
+            }
+
+            club.onclick = function(e) {
+                setLayer(this, e)
+                console.log("6")
+            }
+
+            bar.onclick = function(e) {
+                setLayer(this, e)
+                console.log("7")
+            }
+
+            music.onclick = function(e) {
+                setLayer(this, e)
+                console.log("8")
+            }
+
+            art.onclick = function(e) {
+                setLayer(this, e)
+                console.log("9")
+            }
+        });
+
+
+
+        //]]>
+
+    </script>
+
+    <script>
+        // tell the embed parent frame the height of the content
+        if (window.parent && window.parent.parent) {
+            window.parent.parent.postMessage(["resultsFrame", {
+                height: document.body.getBoundingClientRect().height,
+                slug: "5x3d6otk"
+            }], "*")
+        }
+
+        // always overwrite window.name, in case users try to set it manually
+        window.name = "result"
+
+    </script>
+
+
+</body>
+
+</html>

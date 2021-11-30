@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:text-align="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>A2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.4.1/mapbox-gl.js"></script>
+    <style>
+        #map {
+            display: flex;
+            width: 600px;
+            height: 330px;
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: space-between;
+            width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .other-chart {
+            flex-direction: column;
+            text-align: center;
+        }
+        input{
+            -webkit-appearance:none;
+            -moz-appearance: none;
+            margin-bottom: 10px;
+            border-color: rgba(255, 0, 115, 0.02);
+            width: 170px;
+            height: 27px;
+            border-radius:4px;
+            font-size:0.85em;
+            color: #5c6067;
+        }
+        #NewSouthWales:hover{
+            border-color: rgb(255, 99, 132);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255, 99, 132, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255, 99, 132, 0.2)
+        }
+
+        #Victoria:hover{
+            border-color: rgb(30,154,238);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(30, 154, 238, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(30, 154, 238, 0.2)
+        }
+
+        #Queensland:hover{
+            border-color: rgba(255, 206, 86, 1);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255, 206, 86, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(255, 206, 86, 0.2)
+        }
+
+        #wa:hover{
+            border-color: rgba(55,206,206, 1);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(55,206,206, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(55,206,206, 0.2)
+        }
+
+        #SouthAustralia:hover{
+            border-color: rgba(75,220,27,1);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(75,220,27,0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(75,220,27,0.2)
+        }
+
+        #Tasmania:hover{
+            border-color: rgba(239,85,29, 1);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(239,85,29, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(239,85,29, 0.2)
+        }
+
+        #AustralianCapitalTerritory:hover{
+            border-color: rgb(153, 102, 255);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153, 102, 255, 0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(153, 102, 255, 0.2)
+        }
+
+        #NorthernTerritory:hover{
+            border-color: rgba(220,4,4,1);
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(220,4,4,0.2);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(220,4,4,0.2)
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div>
+        <div style="height:45px;width:1200px;background: rgba(255,99,132,0.55);margin-bottom: 10px; margin-top:10px">
+            <header style=" line-height:45px;font-size: 2.08em;font-family: Georgia; color: rgba(67,70,75,0.85)">Australia Population and Area by States</header>
+        </div>
+
+        <div style="width:1200px;float:left; display:flex;transform: translate(17%, 0%);margin-top:10px;margin-bottom:40px;">
+            <div id="map"></div>
+            <div>
+                <div style="width:80px;float:right; display:inline;margin-top:20px;margin-left: 20px;">
+                    <input id="NewSouthWales" type="button" value="New South Wales"
+                           style="background-color: rgba(255, 99, 132, 0.2);">
+                    <input id="Victoria" type="button" value="Victoria"
+                           style="background-color: rgba(30,154,238, 0.2);">
+                    <input id="Queensland" type="button" value="Queensland"
+                           style="background-color: rgba(255, 206, 86, 0.2);">
+                    <input id="wa" type="button" value="Western Australia"
+                           style="background-color: rgba(55,206,206, 0.2);">
+                    <input id="SouthAustralia" type="button" value="South Australia"
+                           style="background-color: rgba(75,220,27,0.2);">
+                    <input id="Tasmania" type="button" value="Tasmania"
+                           style="background-color: rgba(239,85,29, 0.2);">
+                    <input id="AustralianCapitalTerritory" type="button" value="Australian Capital Territory"
+                           style="background-color: rgba(153, 102, 255, 0.2);">
+                    <input id="NorthernTerritory" type="button" value="Northern Territory"
+                           style="background-color: rgba(220,4,4,0.2);">
+                </div>
+            </div>
+        </div>
+        <header style="height:20px;position: absolute;top:420px;left: 38%; font-style: italic;color: darkgrey; font-family: Arial; font-size: 15px">
+            Fig 1. Population Distribution of Cities in Australia
+        </header>
+        <div class="other-chart" style="width:1200px;">
+            <div style="width:800px;height: 300px;float:left; display:inline;">
+                <canvas id="barChart"></canvas>
+                <header style="margin-bottom: 20px; font-style: italic;color: darkgrey; font-family: Arial; font-size: 15px">Fig 2. Total Population of Each State</header>
+            </div>
+
+            <div style="width:350px;height: 200px;float:right;display:inline;">
+                <canvas id="polarChart" height="200px"></canvas>
+                <header style="font-style: italic;color: darkgrey; font-family: Arial; font-size: 15px">Fig 3. Area of Each State</header>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+
+<script>
+    window.onload = function () {
+
+        // set map
+        let oriData = []
+        let oriDataBar = [{
+            name: 'Western Australia',
+            population: 2675.8,
+            area: 2527013,
+            lat: -25.042261,
+            lng: 117.793221
+        }, {
+            name: 'Queensland',
+            population: 5206.4,
+            area: 1729742,
+            lat: -20.917574,
+            lng: 142.702789
+        }, {
+            name: 'Northern Territory',
+            population: 247.0,
+            area: 1347791,
+            lat: -19.491411,
+            lng: 132.550964
+        }, {
+            name: 'South Australia',
+            population: 1771.7,
+            area: 984321,
+            lat: -30.000233,
+            lng: 136.209152
+        }, {
+            name: 'New South Wales',
+            population: 8174.6,
+            area: 801150,
+            lat: -31.840233,
+            lng: 145.612793
+        }, {
+            name: 'Victoria',
+            population: 6648.6,
+            area: 227444,
+            lat: -37.020100,
+            lng: 144.964600
+        }, {
+            name: 'Tasmania',
+            population: 542.0,
+            area: 68401,
+            lat: -41.640079,
+            lng: 146.315918
+        }, {
+            name: 'Australian Capital Territory',
+            population: 431.8,
+            area: 2358,
+            lat: -35.473469,
+            lng: 149.012375
+        }]
+        let url = 'au.json'
+        let request = new XMLHttpRequest()
+        request.open('get', url)
+        request.send(null)
+
+        request.onload = function () {
+            oriData = JSON.parse(request.responseText)
+            mapboxgl.accessToken = 'pk.eyJ1IjoiMTgxMzI4ODg0MCIsImEiOiJja3RubzRmbGowMHlmMm9xYm4wOGdnYXZiIn0.cYS-pgE7UHPiktRsQaNwJQ';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/light-v10',
+                center: [133.8667, -28.7000],
+                zoom: 2.6
+            });
+            // deal data
+            let features = []
+
+            // initial the map
+            features = []
+            oriData.forEach(item => {
+                features.push({
+                    'type': 'Feature',
+                    'properties': {
+                        'description': `<strong>City: </strong> ${item.city}</br>
+                                        <strong>State: </strong>${item.admin_name}</br>
+                                        <strong>Population: </strong>${item.population} people</br>`
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [item.lng, item.lat]
+                    }
+                })
+            })
+            let isIn = false
+            // create the buttons
+            let oWa = document.getElementById('wa')
+            oWa.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            oWa.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Western Australia')
+            }
+
+            let Queensland = document.getElementById('Queensland')
+            Queensland.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            Queensland.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Queensland')
+            }
+
+            let NorthernTerritory = document.getElementById('NorthernTerritory')
+            NorthernTerritory.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            NorthernTerritory.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Northern Territory')
+            }
+
+            let SouthAustralia = document.getElementById('SouthAustralia')
+            SouthAustralia.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            SouthAustralia.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('South Australia')
+            }
+
+            let NewSouthWales = document.getElementById('NewSouthWales')
+            NewSouthWales.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            NewSouthWales.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('New South Wales')
+            }
+
+            let Victoria = document.getElementById('Victoria')
+            Victoria.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            Victoria.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Victoria')
+            }
+
+            let Tasmania = document.getElementById('Tasmania')
+            Tasmania.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            Tasmania.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Tasmania')
+            }
+
+            let AustralianCapitalTerritory = document.getElementById('AustralianCapitalTerritory')
+            AustralianCapitalTerritory.onmouseout = function () {
+                console.log('out')
+                outOption()
+            }
+
+            AustralianCapitalTerritory.onmouseover = function () {
+                console.log('over')
+                // Pass the states of the corresponding buttons
+                overOption('Australian Capital Territory')
+            }
+
+            // create the button action functions: mouseout
+            function outOption() {
+                features = []
+                oriData.forEach(item => {
+                    features.push({
+                        'type': 'Feature',
+                        'properties': {
+                            'description': `<strong>City: </strong>${item.city}</br>
+                                        <strong>State: </strong>${item.admin_name}</br>
+                                        <strong>Population </strong>:${item.population} people</br>`
+                        },
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': [item.lng, item.lat]
+                        }
+                    })
+                })
+                // map.removeSource
+                var json = {
+                    'type': 'FeatureCollection',
+                    'features': features
+                };
+                map.getSource('places').setData(json)
+                isIn = false
+            }
+
+            // create the button action functions: mouseover
+            function overOption(value2) {
+                let value = value2
+                features = []
+                oriData.forEach(item => {
+                    if (item.admin_name === value) {
+                        features.push({
+                            'type': 'Feature',
+                            'properties': {
+                                'description': `<strong>City: </strong>${item.city}</br>
+                                        <strong>State: </strong>${item.admin_name}</br>
+                                        <strong>Population </strong>:${item.population} people</br>`
+                            },
+                            'geometry': {
+                                'type': 'Point',
+                                'coordinates': [item.lng, item.lat]
+                            }
+                        })
+                    }
+                })
+                if (isIn === false) {
+                    // map.removeSource
+                    console.dir(features)
+                    var json = {
+                        'type': 'FeatureCollection',
+                        'features': features
+                    };
+                    map.getSource('places').setData(json)
+                    isIn = true
+                }
+
+
+
+            }
+
+            // reload the map
+            map.on('load', () => {
+                map.addSource('places', {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'FeatureCollection',
+                        'features': features
+                    }
+                });
+                map.addLayer({
+                    'id': 'places',
+                    'type': 'circle',
+                    'source': 'places',
+                    'paint': {
+                        'circle-color': 'rgba(213,49,53,0.82)',
+                        'circle-radius': 3,
+                        'circle-stroke-width': 0,
+                        'circle-stroke-color': '#ffffff'
+                    }
+                });
+
+                const popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false
+                });
+
+                map.on('mouseenter', 'places', (e) => {
+                    map.getCanvas().style.cursor = 'pointer';
+
+                    const coordinates = e.features[0].geometry.coordinates.slice();
+                    const description = e.features[0].properties.description;
+
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    popup.setLngLat(coordinates).setHTML(description).addTo(map);
+                });
+
+                map.on('mouseleave', 'places', () => {
+                    map.getCanvas().style.cursor = '';
+                    popup.remove();
+                });
+            });
+            // sort data by total population
+            oriDataBar.sort(function (a, b) {
+                return b.population - a.population
+            })
+
+            let populationLabels = []
+            let populationData = []
+            let areaLabels = []
+            let areaData = []
+            oriDataBar.forEach(item => {
+                populationLabels.push(item.name)
+                areaLabels.push(item.name)
+                populationData.push(item.population)
+                areaData.push(item.area)
+            })
+
+            // Polar chart
+            var polarCtx = document.getElementById('polarChart')
+            var polarColor = [
+                'rgba(255, 99, 132, 0.4)',
+                'rgba(30,154,238, 0.4)',
+                'rgba(255, 206, 86, 0.4)',
+                'rgba(55,206,206, 0.4)',
+                'rgba(75,220,27,0.4)',
+                'rgba(239,85,29, 0.4)',
+                'rgba(153, 102, 255, 0.4)',
+                'rgba(220,4,4,0.4)'
+            ]
+            var polarChart = new Chart(polarCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: areaLabels,
+                    datasets: [{
+                        label: 'TOTAL AREA',
+                        data: areaData,
+                        backgroundColor: polarColor,
+                        hoverBackgroundColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(30,154,238, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(55,206,206, 1)',
+                            'rgba(75,220,27, 1)',
+                            'rgba(239,85,29, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(220,4,4,1)'
+                        ],
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            document.onmouseup = function () {
+                polarChart.destroy()
+                polarColor = [
+                    'rgba(255, 99, 132, 0.4)',
+                    'rgba(30,154,238, 0.4)',
+                    'rgba(255, 206, 86, 0.4)',
+                    'rgba(55,206,206, 0.4)',
+                    'rgba(75,220,27,0.4)',
+                    'rgba(239,85,29, 0.4)',
+                    'rgba(153, 102, 255, 0.4)',
+                    'rgba(220,4,4,0.4)'
+                ]
+                polarChart = new Chart(polarCtx, {
+                    type: 'polarArea',
+                    data: {
+                        labels: areaLabels,
+                        datasets: [{
+                            label: 'TOTAL AREA',
+                            data: areaData,
+                            backgroundColor: polarColor,
+                            hoverBackgroundColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(30,154,238, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(55,206,206, 1)',
+                                'rgba(75,220,27, 1)',
+                                'rgba(239,85,29, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(220,4,4,1)'
+                            ],
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // bar chart
+            var barCtx = document.getElementById('barChart')
+            var barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: populationLabels,
+                    datasets: [{
+                        label: 'Population (mil.)',
+                        data: populationData,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(30,154,238, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(55,206,206, 0.2)',
+                            'rgba(75,220,27,0.2)',
+                            'rgba(239,85,29, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(220,4,4,0.2)'
+                        ],
+                        hoverBackgroundColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(30,154,238, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(55,206,206, 1)',
+                            'rgba(75,220,27, 1)',
+                            'rgba(239,85,29, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(220,4,4,1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    // create the click action on bar chart:
+                    // 1. map: fly to the corresponding states
+                    // 2. polar chart: highlight the corresponding area
+                    onClick: (event, elements, chart) => {
+                        console.dir(elements)
+                        console.dir(oriDataBar)
+                        if (elements[0]) {
+                            map.flyTo({
+                                center: [oriDataBar[elements[0].index].lng, oriDataBar[elements[0].index].lat],
+                                zoom: 4.5
+                            })
+                            console.dir(barChart)
+                            polarColor = []
+                            polarChart.destroy()
+
+                            for (let index = 0; index < oriDataBar.length; index++) {
+                                if (index === elements[0].index) {
+                                    polarColor.push('rgba(213,49,53,0.82)')
+                                } else {
+                                    polarColor.push('rgba(217,215,215,0.45)')
+                                }
+                            }
+
+                            polarChart = new Chart(polarCtx, {
+                                type: 'polarArea',
+                                data: {
+                                    labels: areaLabels,
+                                    datasets: [{
+                                        label: 'TOTAL AREA',
+                                        data: areaData,
+                                        backgroundColor: polarColor,
+                                        hoverBackgroundColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(30,154,238, 1)',
+                                            'rgba(255, 206, 86, 1)',
+                                            'rgba(55,206,206, 1)',
+                                            'rgba(75,220,27, 1)',
+                                            'rgba(239,85,29, 1)',
+                                            'rgba(153, 102, 255, 1)',
+                                            'rgba(220,4,4,1)'
+                                        ],
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                },
+            });
+        }
+    }
+</script>
+
+</html>
